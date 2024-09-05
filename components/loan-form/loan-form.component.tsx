@@ -1,24 +1,53 @@
 import styled from 'styled-components/native';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Text, ActivityIndicator } from 'react-native';
 import { Formik } from 'formik';
 import ApplyLoanService from '@/services/apply-loan.service';
+import * as Yup from 'yup';
+import { useRouter } from 'expo-router';
+import { LoanFormModel } from '@/services/model/loan-form.model';
+import { useState } from 'react';
+
+const LoanFormSchema = Yup.object().shape({
+  full_name: Yup.string().required('Full Name is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  loan_amount: Yup.number().required('Loan Amount is required'),
+  loan_purpose: Yup.string().required('Loan Purpose is required'),
+});
 
 const LoanFormComponent = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
+  const handleApplyLoan = async (data: LoanFormModel) => {
+    setLoading(true);
+    const { success } = await ApplyLoanService(data);
+    setLoading(false);
+    if (success) router.navigate('/');
+  };
+
   return (
     <View>
       <Title>Apply For a Loan</Title>
       <ScrollView>
-        <Formik initialValues={{ full_name: '', email: '', loan_amount: '', loan_purpose: '' }} onSubmit={(data) => ApplyLoanService(data)}>
-          {({ handleChange, handleBlur, handleSubmit, values }) => (
+        <Formik
+          initialValues={{ full_name: '', email: '', loan_amount: '', loan_purpose: '' }}
+          validationSchema={LoanFormSchema}
+          onSubmit={(data) => handleApplyLoan(data)}
+          validateOnMount={true}
+        >
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => (
             <View>
               <Label>Full Name</Label>
               <Input onChangeText={handleChange('full_name')} onBlur={handleBlur('full_name')} value={values.full_name} placeholder='Full Name' />
+              {errors.full_name && touched.full_name ? <Text style={{ color: 'red' }}>{errors.full_name}</Text> : null}
 
               <Label>Email</Label>
               <Input onChangeText={handleChange('email')} onBlur={handleBlur('email')} value={values.email} placeholder='yourname@example.com' />
+              {errors.email && touched.email ? <Text style={{ color: 'red' }}>{errors.email}</Text> : null}
 
               <Label>Loan Amount</Label>
               <Input onChangeText={handleChange('loan_amount')} onBlur={handleBlur('loan_amount')} value={values.loan_amount} placeholder='UGX' />
+              {errors.loan_amount && touched.loan_amount ? <Text style={{ color: 'red' }}>{errors.loan_amount}</Text> : null}
 
               <Label>Loan Purpose</Label>
               <Input
@@ -27,9 +56,10 @@ const LoanFormComponent = () => {
                 value={values.loan_purpose}
                 placeholder='Loan Purpose'
               />
+              {errors.loan_purpose && touched.loan_purpose ? <Text style={{ color: 'red' }}>{errors.loan_purpose}</Text> : null}
 
-              <SubmitButton onPress={handleSubmit}>
-                <ButtonText>Submit</ButtonText>
+              <SubmitButton onPress={handleSubmit} disabled={!isValid} loading={loading}>
+                {loading ? <ActivityIndicator size='small' color='#00ff00' /> : <ButtonText>Submit</ButtonText>}
               </SubmitButton>
             </View>
           )}
@@ -38,6 +68,17 @@ const LoanFormComponent = () => {
     </View>
   );
 };
+
+const SubmitButton = styled.TouchableOpacity<{ disabled: boolean; loading: boolean }>`
+  background: ${({ disabled, loading }) => (disabled || loading ? '#ccc' : '#30c2e3')};
+  padding: 16px 12px;
+  border-radius: 10px;
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Title = styled.Text`
   text-align: center;
@@ -57,13 +98,6 @@ const Input = styled.TextInput`
   padding: 12px 13px;
   border-radius: 5px;
   margin-bottom: 20px;
-`;
-
-const SubmitButton = styled.TouchableOpacity`
-  background: #30c2e3;
-  padding: 16px 12px;
-  border-radius: 10px;
-  margin-top: 40px;
 `;
 
 const ButtonText = styled.Text`

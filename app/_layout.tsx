@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const client = new ApolloClient({
-  uri: 'http://192.168.1.3:2024/graphql',
+  uri: process.env.EXPO_PUBLIC_GRAPHQL_URL,
   cache: new InMemoryCache(),
 });
 
