@@ -1,5 +1,6 @@
-import React, { Fragment } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import React, { Fragment, useState } from 'react';
+import { View, ActivityIndicator, ScrollView, Dimensions, RefreshControl } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import styled from 'styled-components/native';
 import { ApolloError, useQuery } from '@apollo/client';
 import { useRouter } from 'expo-router';
@@ -7,15 +8,42 @@ import { getLoanProducts } from '@/apolloClient/loan_products';
 import { LoanCardComponent } from '@/components/loan-card/loan-card.component';
 import { LoanProductsData } from '@/apolloClient/model/loan_products.model';
 
+type RefetchType = () => Promise<{ data: LoanProductsData }>;
 const DashboardComponent: React.FC = () => {
-  const { loading, error, data }: { loading: boolean; data: LoanProductsData | undefined; error?: ApolloError } = useQuery(getLoanProducts);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { loading, error, data, refetch }: { loading: boolean; data: LoanProductsData | undefined; error?: ApolloError; refetch: RefetchType } =
+    useQuery(getLoanProducts);
   const router = useRouter();
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+      setRefreshing(false);
+    } catch (error) {
+      setRefreshing(false);
+    }
+  };
 
   if (error) {
-    return <ErrorText>Something went wrong. Please try again later.</ErrorText>;
+    return (
+      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <CenteredContainer>
+          <Ionicons name='alert-circle' size={50} color='#30c2e3' />
+          <ErrorText>Oops!, Something went wrong. Please try again later.</ErrorText>
+        </CenteredContainer>
+      </ScrollView>
+    );
   }
 
-  const renderLoanCardsContainer = () => {
+  const renderLoading = () => {
+    return (
+      <CenteredContainer>
+        <ActivityIndicator size='large' color='#30c2e3' />
+      </CenteredContainer>
+    );
+  };
+
+  const renderLoanCards = () => {
     return (
       <Fragment>
         <LoanCardContainer>
@@ -30,40 +58,31 @@ const DashboardComponent: React.FC = () => {
     );
   };
 
-  const renderLoading = () => {
-    return <ActivityIndicator size='large' color='#30c2e3' style={{ marginTop: '50%' }} />;
-  };
-
   return (
     <View>
-      <TitleContainer>
-        <Title>Loan Application Dashboard</Title>
-      </TitleContainer>
-      <Content>{loading ? renderLoading() : renderLoanCardsContainer()}</Content>
+      <Content>
+        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+          {loading ? renderLoading() : renderLoanCards()}
+        </ScrollView>
+      </Content>
     </View>
   );
 };
-
-const TitleContainer = styled.View`
-  width: 80%;
-`;
-
-const Title = styled.Text`
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-`;
-
-const ErrorText = styled.Text`
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
-`;
 
 const LoanCardContainer = styled.View`
   display: flex;
   flex-direction: column;
   gap: 20px;
+`;
+
+const CenteredContainer = styled.View`
+  align-items: center;
+  margin-top: ${(Dimensions.get('window').height - 250) / 2}px;
+`;
+
+const ErrorText = styled.Text`
+  text-align: center;
+  font-weight: bold;
 `;
 
 const SubmitButton = styled.TouchableOpacity`
@@ -79,8 +98,6 @@ const ButtonText = styled.Text`
   font-size: 16px;
 `;
 
-const Content = styled.View`
-  width: 100%;
-`;
+const Content = styled.View``;
 
 export default DashboardComponent;
