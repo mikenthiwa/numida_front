@@ -38,7 +38,7 @@ const DashboardComponent: React.FC = () => {
   const renderLoading = () => {
     return (
       <CenteredContainer>
-        <ActivityIndicator size='large' color='#30c2e3' />
+        <ActivityIndicator size='large' color='#30c2e3' testID='loading' />
       </CenteredContainer>
     );
   };
@@ -61,7 +61,7 @@ const DashboardComponent: React.FC = () => {
   return (
     <View>
       <Content>
-        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <ScrollView testID='refresh' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           {loading ? renderLoading() : renderLoanCards()}
         </ScrollView>
       </Content>
