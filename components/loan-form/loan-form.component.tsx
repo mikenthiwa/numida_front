@@ -10,7 +10,7 @@ import { useState } from 'react';
 const LoanFormSchema = Yup.object().shape({
   full_name: Yup.string().required('Full Name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
-  loan_amount: Yup.number().required('Loan Amount is required'),
+  loan_amount: Yup.number().typeError('Loan Amount must be a number').required('Loan Amount is required'),
   loan_purpose: Yup.string().required('Loan Purpose is required'),
 });
 
@@ -35,34 +35,55 @@ const LoanFormComponent = () => {
           onSubmit={(data) => handleApplyLoan(data)}
           validateOnMount={true}
         >
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => (
-            <View>
-              <Label>Full Name</Label>
-              <Input onChangeText={handleChange('full_name')} onBlur={handleBlur('full_name')} value={values.full_name} placeholder='Full Name' />
-              {errors.full_name && touched.full_name ? <Text style={{ color: 'red' }}>{errors.full_name}</Text> : null}
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => {
+            return (
+              <View>
+                <Label>Full Name</Label>
+                <Input
+                  testID='full-name'
+                  onChangeText={handleChange('full_name')}
+                  onBlur={handleBlur('full_name')}
+                  value={values.full_name}
+                  placeholder='Full Name'
+                />
+                {errors.full_name && touched.full_name ? <Text style={{ color: 'red' }}>{errors.full_name}</Text> : null}
 
-              <Label>Email</Label>
-              <Input onChangeText={handleChange('email')} onBlur={handleBlur('email')} value={values.email} placeholder='yourname@example.com' />
-              {errors.email && touched.email ? <Text style={{ color: 'red' }}>{errors.email}</Text> : null}
+                <Label>Email</Label>
+                <Input
+                  testID='email-input'
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  placeholder='yourname@example.com'
+                />
+                {errors.email && touched.email ? <Text style={{ color: 'red' }}>{errors.email}</Text> : null}
 
-              <Label>Loan Amount</Label>
-              <Input onChangeText={handleChange('loan_amount')} onBlur={handleBlur('loan_amount')} value={values.loan_amount} placeholder='UGX' />
-              {errors.loan_amount && touched.loan_amount ? <Text style={{ color: 'red' }}>{errors.loan_amount}</Text> : null}
+                <Label>Loan Amount</Label>
+                <Input
+                  testID='loan-amount'
+                  onChangeText={handleChange('loan_amount')}
+                  onBlur={handleBlur('loan_amount')}
+                  value={values.loan_amount}
+                  placeholder='UGX'
+                />
+                {errors.loan_amount && touched.loan_amount ? <Text style={{ color: 'red' }}>{errors.loan_amount}</Text> : null}
 
-              <Label>Loan Purpose</Label>
-              <Input
-                onChangeText={handleChange('loan_purpose')}
-                onBlur={handleBlur('loan_purpose')}
-                value={values.loan_purpose}
-                placeholder='Loan Purpose'
-              />
-              {errors.loan_purpose && touched.loan_purpose ? <Text style={{ color: 'red' }}>{errors.loan_purpose}</Text> : null}
+                <Label>Loan Purpose</Label>
+                <Input
+                  testID='loan-purpose'
+                  onChangeText={handleChange('loan_purpose')}
+                  onBlur={handleBlur('loan_purpose')}
+                  value={values.loan_purpose}
+                  placeholder='Loan Purpose'
+                />
+                {errors.loan_purpose && touched.loan_purpose ? <Text style={{ color: 'red' }}>{errors.loan_purpose}</Text> : null}
 
-              <SubmitButton onPress={handleSubmit} disabled={!isValid} loading={loading}>
-                {loading ? <ActivityIndicator size='small' color='#00ff00' /> : <ButtonText>Submit</ButtonText>}
-              </SubmitButton>
-            </View>
-          )}
+                <SubmitButton testID='submit-button' onPress={handleSubmit} disabled={!isValid} loading={loading}>
+                  {loading ? <ActivityIndicator size='small' color='#00ff00' testID='loading-indicator' /> : <ButtonText>Submit</ButtonText>}
+                </SubmitButton>
+              </View>
+            );
+          }}
         </Formik>
       </ScrollView>
     </View>
