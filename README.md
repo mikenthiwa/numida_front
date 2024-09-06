@@ -1,50 +1,52 @@
-# Welcome to your Expo app 👋
+### numida_mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An application for managing loan applications and showcasing available loan options.
 
-## Get started
+# Description
 
-1. Install dependencies
+**numida_mobile** allows users to apply for loans by providing necessary details such as their name, email, loan amount, and purpose. It also features a dashboard that displays different loan options with details like maximum loan amount, interest rates, and a “Learn More” feature for additional information on each loan type
 
-   ```bash
-   npm install
-   ```
+## Setup
 
-2. Start the app
+### Dependencies
 
-   ```bash
-    npx expo start
-   ```
+- [Node.js](https://nodejs.org/en/)
+- [Expo](https://expo.dev/)
 
-In the output, you'll find options to open the app in a
+### Getting Started
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Follow these steps to set up the project in development mode
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Install Node.js
+- Download Expo Go from the [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en&gl=US) or [Apple App Store](https://apps.apple.com/us/app/expo-go/id982107779)
+- Clone the repository by running the command
+  ```
+  git clone https://github.com/mikenthiwa/numida_mobile.git
+  ```
+- Navigate to the project directory
+  ```
+   cd numida_mobile
+  ```
+- Install all dependencies by running
+  ```
+  npm install
+  ```
+- Create a `.env` file in the root of your directory using the `.env.example` file in the repository
 
-## Get a fresh project
+- Start the application by running
+  ```
+  npm run start
+  ```
+- Open the Expo Go app on your phone and scan the QR code displayed in the terminal.
+  - [Setup up your environment](https://docs.expo.dev/get-started/set-up-your-environment/)
 
-When you're ready, run:
 
-```bash
-npm run reset-project
-```
+### Testing
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+  [Jest](https://jestjs.io) is used as the testing framework for both the unit tests and integration tests. To execute all tests, run the command
+    ```
+    npm run test
+    ```
 
-## Learn more
+      
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
