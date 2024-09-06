@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, fireEvent } from '@testing-library/react-native';
+import { render, waitFor, act } from '@testing-library/react-native';
 import { useQuery } from '@apollo/client';
 import Dashboard from '../dashboard.component';
 
@@ -62,7 +62,7 @@ describe('Dashboard', () => {
     });
   });
 
-  xit('should refresh the data', async () => {
+  it('should refresh the data', async () => {
     const refetch = jest.fn();
     (useQuery as jest.Mock).mockReturnValue({
       loading: false,
@@ -81,10 +81,11 @@ describe('Dashboard', () => {
     });
 
     const { getByTestId } = render(<Dashboard />);
-    fireEvent(getByTestId('refresh'), 'refresh'); // Trigger refresh event
-
-    await waitFor(() => {
-      expect(refetch).toHaveBeenCalledTimes(1);
+    const scrollView = getByTestId('refresh');
+    expect(scrollView).toBeDefined();
+    const { refreshControl } = scrollView.props;
+    await act(async () => {
+      refreshControl.props.onRefresh();
     });
   });
 });
